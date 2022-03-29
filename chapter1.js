@@ -9,6 +9,10 @@ function statement(invoice, plays) {
     result.play = playFor(result);
     return result;
   }
+
+  function playFor(aPerformance) {
+    return plays[aPerformance.playID];
+  }
 }
 
 function renderPlainText(data, plays) {
@@ -16,7 +20,7 @@ function renderPlainText(data, plays) {
   let result = `청구 내역 (고객명: ${data.customer})\n`;
 
   for (let perf of data.performances) {
-    result += `${playFor(perf).name}: ${usd(amountFor(perf) / 100)} (${
+    result += `${perf.play.name}: ${usd(amountFor(perf) / 100)} (${
       perf.audience
     }석)\n`;
   }
@@ -57,13 +61,9 @@ function renderPlainText(data, plays) {
     return volumeCredits;
   }
 
-  function playFor(aPerformance) {
-    return plays[aPerformance.playID];
-  }
-
   function amountFor(aPerformance) {
     let result = 0;
-    switch (playFor(aPerformance).type) {
+    switch (aPerformance.play.type) {
       case "tragedy":
         result = 40000;
         if (aPerformance.audience > 30) {
@@ -78,7 +78,7 @@ function renderPlainText(data, plays) {
         result += 300 * aPerformance.audience;
         break;
       default:
-        throw new Error(`알 수 없는 장르: ${playFor(aPerformance).type}`);
+        throw new Error(`알 수 없는 장르: ${aPerformance.play.type}`);
     }
     return result;
   }
